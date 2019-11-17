@@ -1,0 +1,201 @@
+<div class="product-container">
+  <div class="side" style="position: relative">
+    <div class="product-description">
+      <div class="action-menu">
+        {{ currentProduct.label }}
+        {{ copiedProduct }}
+        <select [(ngModel)]="copiedProductImage">
+          <option
+            *ngFor="let product of currentCatalogItem.products"
+            [value]="product.image"
+          >
+            {{ product.label }}
+          </option>
+        </select>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm margin--xs--vertical"
+          (click)="copyProduct()"
+        >
+          Copy product
+        </button>
+        <input
+          style="display: none"
+          type="file"
+          (change)="onFileChanged($event)"
+          #fileInput
+        />
+        <button
+          type="button"
+          class="btn btn-warning btn-sm margin--xs--vertical"
+          (click)="fileInput.click()"
+        >
+          <i class="fa fa-upload"></i> Upload file
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning btn-sm margin--xs--vertical"
+          (click)="saveDataToFile()"
+        >
+          <i class="fa fa-save"></i> Save file
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm margin--xs--vertical"
+          (click)="onEditting = !onEditting"
+        >
+          Switch View
+        </button>
+      </div>
+      <div *ngIf="onEditting">
+        <angular-editor
+          [placeholder]="'Enter text here...'"
+          [config]="editorConfig"
+          [(ngModel)]="currentProduct.richTextDescription"
+        ></angular-editor>
+        <div class="action-menu">
+          <div
+            class="form-check form-check-inline"
+            *ngFor="
+              let field of currentProduct?.descriptionFieldList;
+              let idx = index
+            "
+          >
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [(ngModel)]="field.displayed"
+            />
+            <label class="form-check-label" style="margin-right: 2px;">{{
+              field.label
+            }}</label>
+            <i
+              class="fa fa-trash-alt"
+              (click)="currentProduct?.descriptionFieldList.splice(idx, 1)"
+            ></i>
+          </div>
+          <br />
+
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="addDescriptionField()"
+          >
+            <i class="fa fa-plus"></i> Column
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="addDescription()"
+          >
+            <i class="fa fa-plus"></i> Row
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="removeDescription()"
+          >
+            <i class="fa fa-minus"></i> Row
+          </button>
+        </div>
+        <div>
+          <table class="table table-borderless table-hover">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  *ngFor="let col of currentProduct?.descriptionFieldList"
+                  [hidden]="!col.displayed"
+                >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="col.label"
+                    (ngModelChange)="onChangeColLabel(col)"
+                  />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let description of currentProduct?.descriptions">
+                <td
+                  scope="col"
+                  *ngFor="let col of currentProduct?.descriptionFieldList"
+                  (click)="selectedDescription = description"
+                  [hidden]="!col.displayed"
+                >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="description[col.name]"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="!onEditting">
+        <div [innerHtml]="currentProduct.richTextDescription"></div>
+        <div>
+          <table class="table table-borderless table-hover">
+            <thead>
+              <tr *ngIf="currentProduct.descriptions.length > 0">
+                <th
+                  scope="col"
+                  *ngFor="let col of currentProduct?.descriptionFieldList"
+                  [hidden]="!col.displayed"
+                >
+                  {{ col.label }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let description of currentProduct?.descriptions">
+                <td
+                  scope="col"
+                  *ngFor="let col of currentProduct?.descriptionFieldList"
+                  (click)="selectedDescription = description"
+                  [hidden]="!col.displayed"
+                >
+                  {{ description[col.name] }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div
+      style="height: 140px; width: 100%; position: absolute; bottom: 0px; margin-top: 20px; align-items: center; display: flex; overflow-x: auto; white-space:nowrap;"
+    >
+      <div
+        class="product-full-image"
+        *ngFor="let product of currentCatalogItem?.products; let idx = index"
+      >
+        <img
+          [src]="product.image"
+          style="height: 110px; margin: 5px;"
+          (click)="onChangeProduct(product)"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="product-carousel">
+    <div class="product-full-image">
+      <div class="product-full-image">
+        <img
+          class="product-full-image"
+          [src]="currentProduct?.image"
+          style="height: calc(100vh - 100px);"
+          alt="Random first slide"
+        />
+      </div>
+    </div>
+    <!-- <ngb-carousel *ngIf="currentCatalogItem?.images" #carousel [interval]="false" [showNavigationIndicators]="false">
+      <ng-template ngbSlide *ngFor="let image of currentCatalogItem?.images" active>
+        
+      </ng-template>
+    </ngb-carousel> -->
+  </div>
+</div>
