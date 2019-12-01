@@ -30,7 +30,7 @@ export class CatalogComponent implements OnInit {
 
   @ViewChild('carousel', { static: false }) carousel: NgbCarousel;
 
-  constructor(private activatedRoute: ActivatedRoute) {}
+  constructor(private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.options = [
@@ -168,7 +168,7 @@ export class CatalogComponent implements OnInit {
       Object.assign(
         {},
         this.currentProduct.descriptions[
-          this.currentProduct.descriptions.length - 1
+        this.currentProduct.descriptions.length - 1
         ]
       )
     );
@@ -239,6 +239,54 @@ export class CatalogComponent implements OnInit {
     };
   };
 
+  mergeData = (event: any) => {
+    const selectedFile = event.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.readAsText(selectedFile, 'UTF-8');
+    fileReader.onload = () => {
+      const toMergeCatalogItems = JSON.parse(fileReader.result as string);
+      this.catalogItems.map(catItem => {
+        catItem.products.map((prod: any) => {
+          const foundCatItem = toMergeCatalogItems.find((toMergeCatItem: any) => toMergeCatItem.catalog === catItem.catalog)
+          if (foundCatItem && foundCatItem.products) {
+            const foundProd = foundCatItem.products.find((toMergeProd: any) => toMergeProd.image === prod.image)
+            if (foundProd) {
+              const descriptions = foundProd.descriptions.filter((des: any) => des.code !== 'No 120' || des.label !== 'No 120' || des.size !== '10x20x30 cm')
+              if (descriptions.length > 0 || foundProd.richTextDescription !== '') {
+                prod.descriptions = _.uniqBy([...prod.descriptions, ...descriptions], 'code')
+                if (prod.richTextDescription !== foundProd.richTextDescription) prod.richTextDescription = `${prod.richTextDescription}${foundProd.richTextDescription}`
+                prod.descriptionFieldList = _.uniqBy([...prod.descriptionFieldList, ...foundProd.descriptionFieldList], 'name')
+              }
+            }
+          }
+        })
+      })
+
+      this.catalogItems.map(catItem => {
+        const products = _.sortBy(catItem.products, prod =>
+          parseInt(prod.image.split('-').slice(-1), 10)
+        );
+        products.map(
+          (product: any) => (product.label = product.image.split('/').slice(-1))
+        );
+        catItem.products = products;
+      });
+      if (this.currentProduct) {
+        this.catalogItems.map(catItem => {
+          const foundProduct = catItem.products.find(
+            (item: any) => item.image === this.currentProduct.image
+          );
+          if (foundProduct) {
+            this.currentProduct = foundProduct;
+          }
+        });
+      }
+    };
+    fileReader.onerror = error => {
+      console.log(error);
+    };
+  };
+
   saveDataToFile = () => {
     const currentDate = new Date();
     const hours = currentDate.getHours();
@@ -248,12 +296,10 @@ export class CatalogComponent implements OnInit {
     const month = currentDate.getMonth(); //Be careful! January is 0 not 1
     const year = currentDate.getFullYear();
 
-    const dateString = [hours, minutes, seconds, date, month + 1, year].join(
-      '-'
-    );
+    const dateString = [hours, minutes, seconds, date, month + 1, year].join('-');
     saveText(
       JSON.stringify(this.catalogItems),
-      `catalogData-${this.currentCatalogItem}-${this.currentProduct.label}-${dateString}.json`
+      `catalogData-${this.currentCatalogItem.catalog}-${this.currentProduct.label}-${dateString}.json`
     );
   };
 }
