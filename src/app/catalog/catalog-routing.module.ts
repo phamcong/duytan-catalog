@@ -3,19 +3,30 @@ import { Routes, RouterModule } from '@angular/router';
 import { Shell } from '@app/shell/shell.service';
 import { CatalogComponent } from './catalog.component';
 import { extract } from '@app/core';
+import { CatalogListComponent } from './catalog-list.component';
 
 const routes: Routes = [
   Shell.childRoutes([
-    { path: '', redirectTo: '/catalog', pathMatch: 'full' },
+    // { path: '', redirectTo: '/catalog', pathMatch: 'full' },
+    // {
+    //   path: 'catalog',
+    //   component: CatalogComponent,
+    //   data: { title: extract('Catalog') }
+    // },
+    // {
+    //   path: 'catalog/:catalogName',
+    //   component: CatalogComponent,
+    //   data: { title: extract('Catalog') }
+    // },
     {
-      path: 'catalog',
-      component: CatalogComponent,
-      data: { title: extract('Catalog') }
+      path: '',
+      redirectTo: '/promotion',
+      pathMatch: 'full'
     },
     {
-      path: 'catalog/:catalogName',
-      component: CatalogComponent,
-      data: { title: extract('Catalog') }
+      path: ':catalogName',
+      component: CatalogListComponent,
+      data: { title: extract('Catalog List') }
     }
   ])
 ];

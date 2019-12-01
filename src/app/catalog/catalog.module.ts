@@ -8,9 +8,10 @@ import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { BrowserModule } from '@angular/platform-browser';
+import { CatalogListComponent } from './catalog-list.component';
 
 @NgModule({
-  declarations: [CatalogComponent],
+  declarations: [CatalogComponent, CatalogListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -20,4 +21,4 @@ import { BrowserModule } from '@angular/platform-browser';
     AngularEditorModule
   ]
 })
-export class CatalogModule {}
+export class CatalogModule { }

@@ -28,11 +28,12 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.catalogItems = catalogItems;
     this.currentCatalogItem = this.catalogItems[0];
+    this.router.navigate([`promotion`], { replaceUrl: true });
   }
 
   onChangeCatalogItem = (item: any) => {
     this.currentCatalogItem = item;
-    this.router.navigate([`/catalog/${item.name}`], { replaceUrl: true });
+    this.router.navigate([`${item.name}`], { replaceUrl: true });
   };
 
   toggleMenu() {

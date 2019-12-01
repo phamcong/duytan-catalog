@@ -81,6 +81,7 @@ export class CatalogComponent implements OnInit {
     this.catalogItems.map(item => {
       item.products = item.images.map(
         (img: any) =>
+          // tslint:disable-next-line:no-angle-bracket-type-assertion
           <any>{
             image: img,
             label: img.split('/').slice(-1),

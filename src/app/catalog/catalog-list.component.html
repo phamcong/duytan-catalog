@@ -1,0 +1,37 @@
+<div class="product-container">
+  <div class="side" style="position: relative">
+    <div class="product-description">
+      <div>
+        <div [innerHtml]="currentProduct.richTextDescription"></div>
+        <div>
+          <table class="table table-borderless table-hover">
+            <thead>
+              <tr *ngIf="currentProduct.descriptions.length > 0">
+                <th scope="col" *ngFor="let col of currentProduct?.descriptionFieldList" [hidden]="!col.displayed">
+                  {{ col.label }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let description of currentProduct?.descriptions">
+                <td scope="col" *ngFor="let col of currentProduct?.descriptionFieldList"
+                  (click)="selectedDescription = description" [hidden]="!col.displayed">
+                  {{ description[col.name] }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div
+      style="height: 140px; width: 100%; position: absolute; bottom: 0px; margin-top: 20px; align-items: center; display: flex; overflow-x: auto; white-space:nowrap;">
+      <div class="product-full-image" *ngFor="let product of currentCatalogItem?.products; let idx = index">
+        <img [src]="product.image" style="height: 110px; margin: 5px;" (click)="currentProduct = product" />
+      </div>
+    </div>
+  </div>
+  <div class="product-carousel">
+    <img [src]="currentProduct?.image" style="height: calc(100vh - 100px);" alt="Random first slide" />
+  </div>
+</div>
